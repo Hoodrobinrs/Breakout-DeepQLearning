@@ -1,6 +1,6 @@
 """Module containing the paddle sprite"""
 import pygame
-from variables import *
+from breakout.variables import *
 
 class Paddle(pygame.sprite.Sprite):
     """Paddle sprite"""

@@ -1,7 +1,7 @@
 """Module containing the ball sprite"""
 import pygame
 from random import randint
-from variables import *
+from breakout.variables import *
 
 class Ball(pygame.sprite.Sprite):
     """Ball sprite"""

@@ -1,6 +1,6 @@
 """Module containing the ball sprite"""
 import pygame
-from variables import *
+from breakout.variables import *
 
 class Brick(pygame.sprite.Sprite):
     """Brick sprite"""

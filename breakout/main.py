@@ -1,10 +1,10 @@
 """Main module of the game"""
 import pygame
 from random import randint
-from variables import *
-from paddle import Paddle
-from ball import Ball
-from brick import Brick
+from breakout.variables import *
+from breakout.paddle import Paddle
+from breakout.ball import Ball
+from breakout.brick import Brick
 
 
 class Breakout():
