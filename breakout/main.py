@@ -52,9 +52,12 @@ class Breakout():
             observation = self.__get_observation()
             reward = 0
             if score != self.score:
-                reward += (self.score - score)
-            reward += self.hit
-        return observation, reward, self.carry_on
+                reward += self.score - score
+            if lives != self.lives:
+                reward -= (lives - self.lives) * 10
+            if self.hit != 0:
+                reward += 5
+        return observation, reward, not self.carry_on
 
     def get_input_size(self):
         observation = self.__get_observation()
@@ -174,7 +177,7 @@ class Breakout():
     def __check_ball_colides_paddle(self):
         if pygame.sprite.collide_mask(self.ball, self.paddle):
             self.ball.rect.x -= self.ball.velocity[0]
-            self.ball.rect.y -= self.ball.velocity[1]
+            self.ball.rect.y = self.paddle.rect.y -20
             self.ball.bounce_paddle(self.paddle)
             self.hit = 5
 

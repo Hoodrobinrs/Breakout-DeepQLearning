@@ -17,3 +17,6 @@ class Enviroment():
 
     def step(self, action):
         return self.__game.step(action, not self.ai)
+
+    def close(self):
+        self.__game.close()

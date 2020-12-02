@@ -12,7 +12,9 @@ class Ball(pygame.sprite.Sprite):
         self.color = color
         self.width = width
         self.height = height
-        self.velocity = [randint(1, 8), -randint(4, 8)]
+        self.velocity = [randint(-6, 6), randint(2, 5)]
+        if self.velocity[0] < 1 and self.velocity[0] > -1:
+            self.velocity[0] = self.velocity[0] * randint(2, 4)
         self.rect = None
 
     def paint(self):
@@ -26,7 +28,9 @@ class Ball(pygame.sprite.Sprite):
         """Restores ball position after live loss"""
         self.rect.x = 345
         self.rect.y = 460
-        self.velocity = [randint(-1, 8), -randint(4, 8)]
+        self.velocity = [randint(-6, 6), randint(2, 5)]
+        if self.velocity[0] < 1 and self.velocity[0] > -1:
+            self.velocity[0] = self.velocity[0] * randint(2, 4)
 
     def update(self):
         """Update the ball's position"""
@@ -36,7 +40,7 @@ class Ball(pygame.sprite.Sprite):
     def bounce(self):
         """Bounce after collision"""
         self.velocity[1] = -self.velocity[1]
-        self.velocity[0] = randint(-8, 8)
+        self.velocity[0] = randint(-6, 6)
         if self.velocity[0] == 0:
             self.velocity[0] = 4
 
@@ -44,7 +48,7 @@ class Ball(pygame.sprite.Sprite):
         """Bounce after collision with paddle"""
         self.velocity[1] = -self.velocity[1]
         self.velocity[0] = self.velocity[0] + paddle.speed/2 + randint(-4, 4)
-        if self.velocity[0] > 8:
-            self.velocity[0] = 8
-        if self.velocity[0] < -8:
-            self.velocity[0] = -8
+        if self.velocity[0] > 6:
+            self.velocity[0] = 6
+        if self.velocity[0] < -6:
+            self.velocity[0] = -6

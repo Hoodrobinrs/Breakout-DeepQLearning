@@ -6,7 +6,8 @@ class Network(torch.nn.Module):
         super(Network, self).__init__()
 
         self.fc1 = torch.nn.Linear(input_dims, 512)
-        self.fc2 = torch.nn.Linear(512, output_dims)
+        self.fc2 = torch.nn.Linear(512, 256)
+        self.fc3 = torch.nn.Linear(256, output_dims)
 
         self.optimizer = torch.optim.RMSprop(self.parameters(), lr=learning_rate)
 
@@ -17,7 +18,8 @@ class Network(torch.nn.Module):
     def forward(self, state):
         state1 = torch.nn.functional.relu(self.fc1(state))
         state2 = torch.nn.functional.relu(self.fc2(state1))
-        return state2
+        state3 = self.fc3(state2)
+        return state3
 
     def save_checkpoint(self):
         pass

@@ -12,8 +12,8 @@ class Memory(object):
 
         self.new_state_memory = np.zeros((self.memory_size, input_dims), dtype=np.float32)
 
-        self.action_memory = np.zeros(self.memory_size, dtype=np.int16)
-        self.reward_memory = np.zeros(self.memory_size, dtype=np.int16)
+        self.action_memory = np.zeros(self.memory_size, dtype=np.int64)
+        self.reward_memory = np.zeros(self.memory_size, dtype=np.int64)
         self.terminal_memory = np.zeros(self.memory_size, dtype=np.bool)
 
     def store_transition(self, state, action, reward, state_, done):

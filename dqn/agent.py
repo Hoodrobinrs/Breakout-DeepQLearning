@@ -8,7 +8,7 @@ class Agent():
     """Deep Q Learning Agent"""
     def __init__(self, gamma: float, epsilon: float, learning_rate: float,
                  input_dims: tuple, output_dims: tuple, memory_size: int, batch_size: int,
-                 eps_min: float = 0.01, eps_dec: float = 5e-7, replace: int = 1000):
+                 eps_min: float = 0.01, eps_dec: float = 4e-7, replace: int = 1000, exploration_steps: int = 100):
         self.gamma = gamma
         self.epsilon = epsilon
         self.learning_rate = learning_rate
@@ -19,8 +19,10 @@ class Agent():
         self.eps_min = eps_min
         self.eps_dec = eps_dec
         self.replace = replace
+        self.exploration_steps = exploration_steps
 
         self.step_counter = 0
+        self.not_learning_step_counter = 0
 
         self.memory = Memory(memory_size, input_dims, output_dims)
 
@@ -29,12 +31,19 @@ class Agent():
         self.q_network_next = Network(learning_rate, input_dims, output_dims)
 
     def choose_action(self, observation):
-        if np.random.random() > self.epsilon:
+        if np.random.random() > self.epsilon and self.exploration_steps < self.not_learning_step_counter:
             state = torch.tensor([observation], dtype=torch.float).to(self.q_network.device)
             actions = self.q_network.forward(state)
             action = torch.argmax(actions).item()
         else:
             action = np.random.choice(self.output_space)
+        return action
+
+    def choose_game_action(self, observation):
+        state = torch.tensor([observation], dtype=torch.float).to(self.q_network.device)
+        actions = self.q_network.forward(state)
+        print(actions)
+        action = torch.argmax(actions).item()
         return action
 
     def store_transition(self, state, action, reward, state_, done):
@@ -61,18 +70,16 @@ class Agent():
                            if self.epsilon > self.eps_min else self.eps_min
         
     def learn(self):
+        self.not_learning_step_counter += 1
         if self.memory.memory_counter < self.batch_size:
             return
-
         self.q_network.optimizer.zero_grad()
 
         self.replace_target_network()
 
         states, actions, rewards, states_, dones = self.sample_memory()
         indices = np.arange(self.batch_size)
-        print(self.q_network.forward(states))
-        print(indices)
-        print(actions)
+
         q_pred = self.q_network.forward(states)[indices, actions]
         q_next = self.q_network_next.forward(states_).max(dim=1)[0]
 
@@ -81,7 +88,16 @@ class Agent():
 
         loss = self.q_network.loss(q_target, q_pred).to(self.q_network.device)
         loss.backward()
-        self.q_network.step()
+        self.q_network.optimizer.step()
         self.step_counter += 1
 
-        self.decrement_epsilon()
+        if self.exploration_steps < self.not_learning_step_counter:
+            self.decrement_epsilon()
+
+    def save_model(self):
+        torch.save(self.q_network.state_dict(), "qNetwork.model")
+        torch.save(self.q_network_next.state_dict(), "qNetworkNext.model")
+
+    def load_model(self):
+        self.q_network.load_state_dict(torch.load("qNetwork.model"))
+        self.q_network_next.load_state_dict(torch.load("qNetworkNext.model"))
